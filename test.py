@@ -10,23 +10,18 @@ from selenium.common.exceptions import TimeoutException
 from xvfbwrapper import Xvfb
 import requests
 from time import gmtime, strftime
+import MySQLdb
 
 
 class Adiphy(unittest.TestCase):
     def setUp(self):
+        self.xvfb = Xvfb()
+        self.xvfb.start()
         self.total = 500
         self.api_key = 'f737a1f15e270537d23bf8e43b189c58'
         self.site_key = ''
-        self.setting_root = 'settings/'
-        self.preset_root = 'preset/'
-        self.logs_root = 'logs/'
-        self.screenshot_root = 'screenshot/'
-        self.proxy_filename = self.setting_root + 'proxy.txt'
-        self.accounts_filename = self.setting_root + 'accounts.txt'
-        self.use_vpn = True
-        self.xvfb = Xvfb()
-        self.xvfb.start()
-        self.username, self.password = self.get_user()
+        self.username = self.password = ''
+        self.login_type = 1  # ACC
         self.url = "http://adiphy.com/"
         self.login_url = self.url + "auth/signin/"
         self.scroll_count = 0
@@ -36,11 +31,43 @@ class Adiphy(unittest.TestCase):
         self.sleep_after_like = 2
         self.sleep_after_scroll = 2
         self.scroll_max_try = 3
-
-        self.driver = webdriver.Firefox()
+        self.driver = webdriver.Chrome()
         self.driver.maximize_window()
         self.driver.implicitly_wait(30)
         print strftime("%Y-%m-%d %H:%M:%S", gmtime()) + ' ---------- START ----------'
+
+    def getSettings(self):
+        try:
+            print strftime("%Y-%m-%d %H:%M:%S", gmtime()) + ' ***** Try to get settings *****'
+            db = MySQLdb.connect(host="94.177.199.7", user="user", passwd="passwd", db="adiphy")
+            cursor = db.cursor()
+            sql = "SELECT * FROM settings WHERE id=1"
+            cursor.execute(sql)
+            db.commit()
+            all_settings = cursor.fetchall()
+            if len(all_settings) > 0:
+                first_settings = all_settings[0]
+                self.total = first_settings[1]
+                self.api_key = first_settings[2]
+                self.post_start = first_settings[3]
+                self.post_end = first_settings[4]
+                self.sleep_after_like = first_settings[5]
+                self.sleep_after_scroll = first_settings[6]
+                self.scroll_max_try = first_settings[7]
+
+            public_ip = requests.get('http://ip.42.pl/raw').text
+            sql = 'SELECT * FROM accounts WHERE ip="%s"' % public_ip
+            cursor.execute(sql)
+            result = cursor.fetchall()
+            if len(result) > 0:
+                first_user = result[0]
+                self.username = first_user[1]
+                self.password = first_user[2]
+                self.login_type = first_user[4]
+            db.close()
+        except:
+            print strftime("%Y-%m-%d %H:%M:%S", gmtime()) + ' ----- Failed to get settings -----'
+            self.getSettings()
 
     def test_demo(self):
         self.driver.get(self.login_url)
@@ -51,17 +78,26 @@ class Adiphy(unittest.TestCase):
             check_login = True
 
         if check_login is False:
+            self.getSettings()
             if self.username != '' and self.password != '':
-                self.driver.find_element_by_id('username').send_keys(self.username)
-                self.driver.find_element_by_id('password').send_keys(self.password)
-                if self.solve_grecaptcha():
-                    self.driver.find_element_by_xpath('//button[@type="submit"]').click()
-                    self.start_app()
+                if self.login_type == 1:
+                    self.driver.find_element_by_id('username').send_keys(self.username)
+                    self.driver.find_element_by_id('password').send_keys(self.password)
+                    if self.solve_grecaptcha():
+                        print strftime("%Y-%m-%d %H:%M:%S", gmtime()) + ' ***** Solve Google reCaptcha success! *****'
+                        self.driver.find_element_by_xpath('//button[@type="submit"]').click()
+                        self.start_app()
+                    else:
+                        print strftime("%Y-%m-%d %H:%M:%S", gmtime()) + ' ----- Solve Google reCaptcha failed! -----'
+                        self.test_demo()
                 else:
-                    print strftime("%Y-%m-%d %H:%M:%S", gmtime()) + ' ***** Solve Google reCaptcha success! *****'
-                    self.test_demo()
+                    self.driver.find_element_by_xpath("//a[@href='/fbconnect/']").click()
+                    self.driver.find_element_by_id('email').send_keys(self.username)
+                    self.driver.find_element_by_id('pass').send_keys(self.password)
+                    self.driver.find_element_by_id('loginbutton').click()
+                    self.start_app()
             else:
-                print strftime("%Y-%m-%d %H:%M:%S", gmtime()) + ' !!! Account must not empty !!!'
+                print strftime("%Y-%m-%d %H:%M:%S", gmtime()) + ' ----- Can not get account info! -----'
         else:
             self.start_app()
 
@@ -103,15 +139,6 @@ class Adiphy(unittest.TestCase):
                 self.driver.get(self.url)
             print strftime("%Y-%m-%d %H:%M:%S", gmtime()) + ' --------- RESTART ----------'
             self.test_demo()
-
-    def get_user(self):
-        with open(self.accounts_filename) as accounts_file:
-            content = accounts_file.readlines()
-            accounts_file.close()
-        content_list = [x.strip() for x in content]
-        first_acc = content_list[0]
-        acc_split = first_acc.split(' ')
-        return acc_split[0].strip(), acc_split[1].strip()
 
     def find_post_and_click(self, index):
         if self.scroll_to_find_el(index, 0):
