@@ -31,7 +31,7 @@ class Adiphy(unittest.TestCase):
         self.sleep_after_like = 2
         self.sleep_after_scroll = 2
         self.scroll_max_try = 3
-        self.driver = webdriver.Chrome()
+        self.driver = webdriver.Firefox()
         self.driver.maximize_window()
         self.driver.implicitly_wait(30)
         print strftime("%Y-%m-%d %H:%M:%S", gmtime()) + ' ---------- START ----------'
