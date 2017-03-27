@@ -49,7 +49,7 @@ class Adiphy(unittest.TestCase):
             all_settings = cursor.fetchall()
             if len(all_settings) > 0:
                 first_settings = all_settings[0]
-                self.total = first_settings[1]
+                self.total = self.click_available = first_settings[1]
                 self.api_key = first_settings[2]
                 self.post_start = first_settings[3]
                 self.post_end = first_settings[4]
@@ -137,6 +137,9 @@ class Adiphy(unittest.TestCase):
                 print strftime("%Y-%m-%d %H:%M:%S", gmtime()) + ' ---------- END ----------'
         except:
             print strftime("%Y-%m-%d %H:%M:%S", gmtime()) + ' ' + str(self.clicked_count + 1) + ' - Failed - Retrying......'
+            time_error = strftime("%Y-%m-%d %H:%M:%S", gmtime())
+            self.driver.save_screenshot('click_home - ' + time_error + '.png')
+
             if self.click_home() is False:
                 self.driver.get(self.url)
             print strftime("%Y-%m-%d %H:%M:%S", gmtime()) + ' --------- RESTART ----------'
@@ -149,6 +152,9 @@ class Adiphy(unittest.TestCase):
             else:
                 return self.find_post_and_click(index)
         else:
+            time_error = strftime("%Y-%m-%d %H:%M:%S", gmtime())
+            print 'Failed in scroll_to_find_el'
+            self.driver.save_screenshot('scroll_to_find_el - ' + time_error + '.png')
             return False
 
     def scroll_to_find_el(self, index, retry):
@@ -182,51 +188,68 @@ class Adiphy(unittest.TestCase):
         return self.click_like_btn()
 
     def click_post(self, index):
-        wait = WebDriverWait(self.driver, 30)
-        home_show = wait.until(
-            ec.presence_of_element_located((By.CLASS_NAME, 'grid-item'))
-        )
-        if self.driver.execute_script('return $(".grid-item").eq(' + str(index) + ').find("img:first").length'):
-            self.driver.execute_script('$(".grid-item").eq(' + str(index) + ').find("img:first").click();', home_show)
-            return True
-        else:
+        try:
+            home_show = WebDriverWait(self.driver, 30).until(
+                ec.presence_of_element_located((By.CLASS_NAME, 'grid-item'))
+            )
+            if self.driver.execute_script('return $(".grid-item").eq(' + str(index) + ').find("img:first").length'):
+                self.driver.execute_script('$(".grid-item").eq(' + str(index) + ').find("img:first").click();', home_show)
+                return True
+            else:
+                return False
+        except:
+            time_error = strftime("%Y-%m-%d %H:%M:%S", gmtime())
+            print 'Failed in click_post'
+            self.driver.save_screenshot('click_post - ' + time_error + '.png')
             return False
 
     def click_like_btn(self):
-        if self.driver.execute_script("return $('#progressBar').length"):
+        if self.driver.execute_script("return $('#progressBar').length") > 0:
             self.hover_to_countdown()
-            time.sleep(1)
+            time.sleep(2)
             return self.click_like_btn()
-        elif self.driver.execute_script("return $('#go-submit-likeUp').length"):
+        elif self.driver.execute_script("return $('#go-submit-likeUp').length") > 0:
             self.driver.execute_script("$('#go-submit-likeUp').click()")
             time.sleep(self.sleep_after_like)
             return self.click_home()
-        elif self.driver.execute_script("return $('#go-link').find('#btns_sub button:last').length"):
+        elif self.driver.execute_script("return $('#go-link').find('#btns_sub button:last').length") > 0:
             self.driver.execute_script("$('#go-link').find('#btns_sub button:last').click()")
             time.sleep(self.sleep_after_like)
             return self.click_home()
         else:
+            time_error = strftime("%Y-%m-%d %H:%M:%S", gmtime())
+            print 'Failed in click_like_btn'
+            self.driver.save_screenshot('click_like_btn - ' + time_error + '.png')
             return False
 
     def click_home(self):
         try:
-            wait = WebDriverWait(self.driver, 2)
-            logo = wait.until(
+            logo = WebDriverWait(self.driver, 30).until(
                 ec.presence_of_element_located((By.XPATH, '//a[@href="' + self.url + '"]'))
             )
             logo.click()
+        except:
+            time_error = strftime("%Y-%m-%d %H:%M:%S", gmtime())
+            print 'Failed in click_home'
+            self.driver.save_screenshot('click_home - ' + time_error + '.png')
+            self.driver.get(self.url)
+
+        try:
             available_count = WebDriverWait(self.driver, 30).until(
                 ec.presence_of_element_located((By.CLASS_NAME, 'h-item-value'))
             )
-            self.click_available = int(available_count.text)
-            return True
-        except TimeoutException:
-            return False
+            if available_count and available_count.text.strip() != '':
+                self.click_available = int()
+                print strftime("%Y-%m-%d %H:%M:%S", gmtime()) + ' ***** click available: ' + str(self.click_available) + ' *****'
         except:
-            return False
+            pass
+        return True
 
     def hover_to_countdown(self):
-        self.driver.find_element_by_class_name('img-responsive').click()
+        try:
+            self.driver.find_element_by_class_name('img-responsive').click()
+        except:
+            pass
 
     def tearDown(self):
         self.driver.quit()
