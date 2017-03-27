@@ -206,7 +206,7 @@ class Adiphy(unittest.TestCase):
     def click_like_btn(self):
         if self.driver.execute_script("return $('#progressBar').length") > 0:
             self.hover_to_countdown()
-            time.sleep(2)
+            time.sleep(1)
             return self.click_like_btn()
         elif self.driver.execute_script("return $('#go-submit-likeUp').length") > 0:
             self.driver.execute_script("$('#go-submit-likeUp').click()")
