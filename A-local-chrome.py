@@ -239,7 +239,7 @@ class Adiphy(unittest.TestCase):
                 ec.presence_of_element_located((By.CLASS_NAME, 'h-item-value'))
             )
             if available_count and available_count.text.strip() != '':
-                self.click_available = int()
+                self.click_available = int(available_count.text)
                 print strftime("%Y-%m-%d %H:%M:%S", gmtime()) + ' ***** click available: ' + str(self.click_available) + ' *****'
         except:
             pass
