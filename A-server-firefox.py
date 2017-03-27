@@ -193,11 +193,8 @@ class Adiphy(unittest.TestCase):
             return False
 
     def click_like_btn(self):
-        find_countdown = self.driver.execute_script("return $('#progressBar').length")
-        if find_countdown == 1:
-            # countdown = self.driver.execute_script("return $('#countdown').text()")
+        if self.driver.execute_script("return $('#progressBar').length"):
             self.hover_to_countdown()
-            # time.sleep(int(countdown) + 1)
             time.sleep(1)
             return self.click_like_btn()
         elif self.driver.execute_script("return $('#go-submit-likeUp').length"):
@@ -229,8 +226,6 @@ class Adiphy(unittest.TestCase):
             return False
 
     def hover_to_countdown(self):
-        # hover = ActionChains(self.driver).move_to_element(self.driver.find_element_by_id("right_content"))
-        # hover.perform()
         self.driver.find_element_by_class_name('img-responsive').click()
 
     def tearDown(self):
