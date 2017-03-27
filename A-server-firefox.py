@@ -226,7 +226,7 @@ class Adiphy(unittest.TestCase):
     def click_home(self):
         try:
             logo = WebDriverWait(self.driver, 30).until(
-                ec.presence_of_element_located((By.XPATH, '//a[@href="' + self.url + '"]'))
+                ec.presence_of_element_located((By.CLASS_NAME, 'logo'))
             )
             logo.click()
         except:
