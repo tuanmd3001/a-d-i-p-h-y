@@ -247,7 +247,7 @@ class Adiphy(unittest.TestCase):
 
     def hover_to_countdown(self):
         try:
-            self.driver.find_element_by_class_name('img-responsive').click()
+            self.driver.find_element_by_xpath('//img[@class="img-responsive"]').click()
         except:
             pass
 
