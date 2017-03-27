@@ -8,7 +8,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.common.exceptions import TimeoutException
-from xvfbwrapper import Xvfb
+# from xvfbwrapper import Xvfb
 import requests
 from time import gmtime, strftime
 import MySQLdb
@@ -16,8 +16,8 @@ import MySQLdb
 
 class Adiphy(unittest.TestCase):
     def setUp(self):
-        self.xvfb = Xvfb()
-        self.xvfb.start()
+        # self.xvfb = Xvfb()
+        # self.xvfb.start()
         self.total = 500
         self.click_available = 500
         self.api_key = 'f737a1f15e270537d23bf8e43b189c58'
@@ -128,6 +128,7 @@ class Adiphy(unittest.TestCase):
                         self.clicked_count += 1
                         print strftime("%Y-%m-%d %H:%M:%S", gmtime()) + ' ' + str(self.clicked_count) + ' - Done - Time: ' + str(time.time() - start_time) + 's'
                     else:
+                        self.driver.get(self.url)
                         break
                 else:
                     break
@@ -247,13 +248,15 @@ class Adiphy(unittest.TestCase):
 
     def hover_to_countdown(self):
         try:
+            self.driver.find_element_by_xpath('//div[@class="loadingicon"]').click()
+            self.driver.find_element_by_xpath('//div[@id="btns_sub"]').click()
             self.driver.find_element_by_xpath('//img[@class="img-responsive"]').click()
         except:
             pass
 
     def tearDown(self):
         self.driver.quit()
-        self.xvfb.stop()
+        # self.xvfb.stop()
 
 
 if __name__ == "__main__":

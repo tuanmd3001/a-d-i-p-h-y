@@ -128,6 +128,7 @@ class Adiphy(unittest.TestCase):
                         self.clicked_count += 1
                         print strftime("%Y-%m-%d %H:%M:%S", gmtime()) + ' ' + str(self.clicked_count) + ' - Done - Time: ' + str(time.time() - start_time) + 's'
                     else:
+                        self.driver.get(self.url)
                         break
                 else:
                     break
@@ -247,6 +248,8 @@ class Adiphy(unittest.TestCase):
 
     def hover_to_countdown(self):
         try:
+            self.driver.find_element_by_xpath('//div[@class="loadingicon"]').click()
+            self.driver.find_element_by_xpath('//div[@id="btns_sub"]').click()
             self.driver.find_element_by_xpath('//img[@class="img-responsive"]').click()
         except:
             pass
