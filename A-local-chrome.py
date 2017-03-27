@@ -262,12 +262,7 @@ class Adiphy(unittest.TestCase):
             return False
 
     def hover_to_countdown(self):
-        try:
-            self.driver.find_element_by_xpath('//div[@class="loadingicon"]').click()
-            self.driver.find_element_by_xpath('//div[@id="btns_sub"]').click()
-            self.driver.find_element_by_xpath('//img[@class="img-responsive"]').click()
-        except:
-            pass
+        self.driver.execute_script("window.blurred = false;")
 
     def tearDown(self):
         self.driver.quit()
