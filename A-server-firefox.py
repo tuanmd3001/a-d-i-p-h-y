@@ -193,6 +193,7 @@ class Adiphy(unittest.TestCase):
             return False
 
     def click_like_btn(self):
+        self.driver.save_screenshot(str(time.time()) + '.png')
         if self.driver.execute_script("return $('#progressBar').length"):
             self.hover_to_countdown()
             time.sleep(1)
