@@ -5,6 +5,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 import unittest
 import time
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.common.exceptions import TimeoutException
 # from xvfbwrapper import Xvfb
@@ -18,6 +19,7 @@ class Adiphy(unittest.TestCase):
         # self.xvfb = Xvfb()
         # self.xvfb.start()
         self.total = 500
+        self.click_available = 500
         self.api_key = 'f737a1f15e270537d23bf8e43b189c58'
         self.site_key = ''
         self.username = self.password = ''
@@ -120,7 +122,7 @@ class Adiphy(unittest.TestCase):
     def start_app(self):
         try:
             for i in list(range(self.post_start, self.post_end + 1)):
-                if self.clicked_count < self.total:
+                if self.clicked_count < self.total and self.click_available > 0:
                     start_time = time.time()
                     if self.find_post_and_click(i):
                         self.clicked_count += 1
@@ -129,7 +131,7 @@ class Adiphy(unittest.TestCase):
                         break
                 else:
                     break
-            if self.clicked_count < self.total:
+            if self.clicked_count < self.total and self.click_available > 0:
                 self.start_app()
             else:
                 print strftime("%Y-%m-%d %H:%M:%S", gmtime()) + ' ---------- END ----------'
@@ -191,11 +193,12 @@ class Adiphy(unittest.TestCase):
             return False
 
     def click_like_btn(self):
-        find_countdown = self.driver.execute_script("return $('#countdown').length")
+        find_countdown = self.driver.execute_script("return $('#progressBar').length")
         if find_countdown == 1:
-            countdown = self.driver.execute_script("return $('#countdown').text()")
+            # countdown = self.driver.execute_script("return $('#countdown').text()")
             self.hover_to_countdown()
-            time.sleep(int(countdown) + 1)
+            # time.sleep(int(countdown) + 1)
+            time.sleep(1)
             return self.click_like_btn()
         elif self.driver.execute_script("return $('#go-submit-likeUp').length"):
             self.driver.execute_script("$('#go-submit-likeUp').click()")
@@ -215,9 +218,10 @@ class Adiphy(unittest.TestCase):
                 ec.presence_of_element_located((By.XPATH, '//a[@href="' + self.url + '"]'))
             )
             logo.click()
-            WebDriverWait(self.driver, 30).until(
-                ec.presence_of_element_located((By.CLASS_NAME, 'boxsearch'))
+            available_count = WebDriverWait(self.driver, 30).until(
+                ec.presence_of_element_located((By.CLASS_NAME, 'h-item-value'))
             )
+            self.click_available = int(available_count.text)
             return True
         except TimeoutException:
             return False
@@ -225,9 +229,9 @@ class Adiphy(unittest.TestCase):
             return False
 
     def hover_to_countdown(self):
-        # hover = ActionChains(self.driver).move_to_element(self.driver.find_element_by_tag_name("body"))
+        # hover = ActionChains(self.driver).move_to_element(self.driver.find_element_by_id("right_content"))
         # hover.perform()
-        self.driver.find_element_by_id('countdown').click()
+        self.driver.find_element_by_class_name('img-responsive').click()
 
     def tearDown(self):
         self.driver.quit()
