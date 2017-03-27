@@ -34,7 +34,7 @@ class Adiphy(unittest.TestCase):
         self.sleep_after_scroll = 2
         self.scroll_max_try = 3
         self.driver = webdriver.Chrome()
-        # self.driver.maximize_window()
+        self.driver.set_window_size(414, 736)
         self.driver.implicitly_wait(30)
         print strftime("%Y-%m-%d %H:%M:%S", gmtime()) + ' ---------- START ----------'
 
@@ -236,15 +236,30 @@ class Adiphy(unittest.TestCase):
             self.driver.get(self.url)
 
         try:
-            available_count = WebDriverWait(self.driver, 30).until(
-                ec.presence_of_element_located((By.CLASS_NAME, 'h-item-value'))
+            available_count = WebDriverWait(self.driver, 5).until(
+                ec.presence_of_element_located((By.CSS_SELECTOR, '.navbar-toggle.collapsed'))
             )
-            if available_count and available_count.text.strip() != '':
+            if available_count and available_count.text.strip() != '' and self.RepresentsInt(available_count.text.strip()):
                 self.click_available = int(available_count.text)
                 print strftime("%Y-%m-%d %H:%M:%S", gmtime()) + ' ***** click available: ' + str(self.click_available) + ' *****'
+            else:
+                available_count = WebDriverWait(self.driver, 5).until(
+                    ec.presence_of_element_located((By.CLASS_NAME, 'h-item-value'))
+                )
+                if available_count and available_count.text.strip() != '' and self.RepresentsInt(available_count.text.strip()):
+                    self.click_available = int(available_count.text)
+                    print strftime("%Y-%m-%d %H:%M:%S", gmtime()) + ' ***** click available: ' + str(self.click_available) + ' *****'
         except:
             pass
         return True
+
+    @staticmethod
+    def RepresentsInt(s):
+        try:
+            int(s)
+            return True
+        except ValueError:
+            return False
 
     def hover_to_countdown(self):
         try:
