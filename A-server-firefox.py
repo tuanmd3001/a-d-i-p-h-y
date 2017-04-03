@@ -193,9 +193,13 @@ class Adiphy(unittest.TestCase):
             home_show = WebDriverWait(self.driver, 30).until(
                 ec.presence_of_element_located((By.CLASS_NAME, 'grid-item'))
             )
-            if self.driver.execute_script('return $(".grid-item").eq(' + str(index) + ').find("img:first").length'):
-                self.driver.execute_script('$(".grid-item").eq(' + str(index) + ').find("img:first").click();', home_show)
-                return True
+            if self.driver.execute_script('return $(".grid-item").eq(' + str(index) + ').length'):
+                if self.driver.execute_script('return $(".grid-item").eq(' + str(index) + ').hasClass("puBoxHomeWhite")'):
+                    index += 1
+                    return self.click_post(index)
+                else:
+                    self.driver.execute_script('$(".grid-item").eq(' + str(index) + ').find("img:first").click();', home_show)
+                    return True
             else:
                 return False
         except:
