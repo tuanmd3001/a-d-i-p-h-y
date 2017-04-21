@@ -229,10 +229,11 @@ class Adiphy(unittest.TestCase):
 
     def click_home(self):
         try:
-            logo = WebDriverWait(self.driver, 30).until(
-                ec.presence_of_element_located((By.CLASS_NAME, 'logo'))
-            )
-            logo.click()
+            # logo = WebDriverWait(self.driver, 30).until(
+            #     ec.presence_of_element_located((By.CLASS_NAME, 'logo'))
+            # )
+            # logo.click()
+            self.driver.get(self.url)
         except:
             time_error = strftime("%Y-%m-%d %H:%M:%S", gmtime())
             print 'Failed in click_home'
