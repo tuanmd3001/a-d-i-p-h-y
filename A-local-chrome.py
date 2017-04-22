@@ -139,7 +139,7 @@ class Adiphy(unittest.TestCase):
         except:
             print strftime("%Y-%m-%d %H:%M:%S", gmtime()) + ' ' + str(self.clicked_count + 1) + ' - Failed - Retrying......'
             time_error = strftime("%Y-%m-%d %H:%M:%S", gmtime())
-            self.driver.save_screenshot('click_home - ' + time_error + '.png')
+            # self.driver.save_screenshot('click_home - ' + time_error + '.png')
 
             # if self.click_home() is False:
             self.driver.get(self.url)
@@ -155,7 +155,7 @@ class Adiphy(unittest.TestCase):
         else:
             time_error = strftime("%Y-%m-%d %H:%M:%S", gmtime())
             print 'Failed in scroll_to_find_el'
-            self.driver.save_screenshot('scroll_to_find_el - ' + time_error + '.png')
+            # self.driver.save_screenshot('scroll_to_find_el - ' + time_error + '.png')
             return False
 
     def scroll_to_find_el(self, index, retry):
@@ -205,7 +205,7 @@ class Adiphy(unittest.TestCase):
         except:
             time_error = strftime("%Y-%m-%d %H:%M:%S", gmtime())
             print 'Failed in click_post'
-            self.driver.save_screenshot('click_post - ' + time_error + '.png')
+            # self.driver.save_screenshot('click_post - ' + time_error + '.png')
             return False
 
     def click_like_btn(self):
@@ -225,7 +225,7 @@ class Adiphy(unittest.TestCase):
             else:
                 time_error = strftime("%Y-%m-%d %H:%M:%S", gmtime())
                 print 'Failed in click_like_btn'
-                self.driver.save_screenshot('click_like_btn - ' + time_error + '.png')
+                # self.driver.save_screenshot('click_like_btn - ' + time_error + '.png')
                 return False
         except:
             self.hover_to_countdown()
@@ -242,7 +242,7 @@ class Adiphy(unittest.TestCase):
         except:
             time_error = strftime("%Y-%m-%d %H:%M:%S", gmtime())
             print 'Failed in click_home'
-            self.driver.save_screenshot('click_home - ' + time_error + '.png')
+            # self.driver.save_screenshot('click_home - ' + time_error + '.png')
             self.driver.get(self.url)
 
         try:
