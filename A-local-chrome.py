@@ -209,23 +209,28 @@ class Adiphy(unittest.TestCase):
             return False
 
     def click_like_btn(self):
-        if self.driver.execute_script("return $('#progressBar').length") > 0:
+        try:
+            if self.driver.execute_script("return $('#progressBar').length") > 0:
+                self.hover_to_countdown()
+                time.sleep(1)
+                return self.click_like_btn()
+            elif self.driver.execute_script("return $('#go-submit-likeUp').length") > 0:
+                self.driver.execute_script("$('#go-submit-likeUp').click()")
+                time.sleep(self.sleep_after_like)
+                return self.click_home()
+            elif self.driver.execute_script("return $('#go-link').find('#btns_sub button:last').length") > 0:
+                self.driver.execute_script("$('#go-link').find('#btns_sub button:last').click()")
+                time.sleep(self.sleep_after_like)
+                return self.click_home()
+            else:
+                time_error = strftime("%Y-%m-%d %H:%M:%S", gmtime())
+                print 'Failed in click_like_btn'
+                self.driver.save_screenshot('click_like_btn - ' + time_error + '.png')
+                return False
+        except:
             self.hover_to_countdown()
             time.sleep(1)
             return self.click_like_btn()
-        elif self.driver.execute_script("return $('#go-submit-likeUp').length") > 0:
-            self.driver.execute_script("$('#go-submit-likeUp').click()")
-            time.sleep(self.sleep_after_like)
-            return self.click_home()
-        elif self.driver.execute_script("return $('#go-link').find('#btns_sub button:last').length") > 0:
-            self.driver.execute_script("$('#go-link').find('#btns_sub button:last').click()")
-            time.sleep(self.sleep_after_like)
-            return self.click_home()
-        else:
-            time_error = strftime("%Y-%m-%d %H:%M:%S", gmtime())
-            print 'Failed in click_like_btn'
-            self.driver.save_screenshot('click_like_btn - ' + time_error + '.png')
-            return False
 
     def click_home(self):
         try:
