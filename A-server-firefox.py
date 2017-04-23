@@ -140,9 +140,8 @@ class Adiphy(unittest.TestCase):
             print strftime("%Y-%m-%d %H:%M:%S", gmtime()) + ' ' + str(self.clicked_count + 1) + ' - Failed - Retrying......'
             time_error = strftime("%Y-%m-%d %H:%M:%S", gmtime())
             self.driver.save_screenshot('click_home - ' + time_error + '.png')
-
-            # if self.click_home() is False:
-            self.driver.get(self.url)
+            self.driver.quit()
+            self.driver = webdriver.Chrome()
             print strftime("%Y-%m-%d %H:%M:%S", gmtime()) + ' --------- RESTART ----------'
             self.test_demo()
 
