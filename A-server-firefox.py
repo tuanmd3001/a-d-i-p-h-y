@@ -229,7 +229,10 @@ class Adiphy(unittest.TestCase):
         except:
             self.hover_to_countdown()
             time.sleep(1)
-            return self.click_like_btn()
+            if self.click_like_btn() is True:
+                return True
+            else:
+                return False
 
     def click_home(self):
         try:
