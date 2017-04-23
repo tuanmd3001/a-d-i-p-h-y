@@ -207,7 +207,7 @@ class Adiphy(unittest.TestCase):
             # self.driver.save_screenshot('click_post - ' + time_error + '.png')
             return False
 
-    def click_like_btn(self):
+    def click_like_btn(self, retry=0):
         try:
             if self.driver.execute_script("return $('#progressBar').length") > 0:
                 self.hover_to_countdown()
@@ -227,10 +227,10 @@ class Adiphy(unittest.TestCase):
                 # self.driver.save_screenshot('click_like_btn - ' + time_error + '.png')
                 return False
         except:
-            self.hover_to_countdown()
-            time.sleep(1)
-            if self.click_like_btn() is True:
-                return True
+            if retry != 1:
+                self.hover_to_countdown()
+                time.sleep(1)
+                return self.click_like_btn(1)
             else:
                 return False
 
