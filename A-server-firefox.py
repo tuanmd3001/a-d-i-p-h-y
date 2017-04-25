@@ -141,7 +141,7 @@ class Adiphy(unittest.TestCase):
             time_error = strftime("%Y-%m-%d %H:%M:%S", gmtime())
             self.driver.save_screenshot('click_home - ' + time_error + '.png')
             self.driver.quit()
-            self.driver = webdriver.Chrome()
+            self.driver = webdriver.Firefox()
             self.driver.set_window_size(414, 736)
             print strftime("%Y-%m-%d %H:%M:%S", gmtime()) + ' --------- RESTART ----------'
             self.test_demo()
