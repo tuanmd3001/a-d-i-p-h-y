@@ -24,7 +24,7 @@ class Adiphy(unittest.TestCase):
         self.site_key = ''
         self.username = self.password = ''
         self.login_type = 1  # ACC
-        self.url = "http://adiphy.com/"
+        self.url = "http://ratebuk.com/"
         self.login_url = self.url + "auth/signin/"
         self.scroll_count = 0
         self.post_start = 0
